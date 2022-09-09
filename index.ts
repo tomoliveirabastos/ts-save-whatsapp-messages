@@ -1,4 +1,3 @@
-import express from 'express'
 import { Client, LocalAuth, Message } from 'whatsapp-web.js'
 import { Handle } from './handle'
 import { Message as MessageEntity } from './message'
@@ -33,16 +32,3 @@ client.on('message', async (message: Message) =>
 })
 
 client.initialize()
-
-const app = express()
-
-app.get("/my-messages/:page", async (req, res) =>
-{
-       const page = Number(req.params.page)
-
-       const messages = await MessageEntity.getMessages(page)
-
-       return res.json(messages)
-})
-
-app.listen(3000)
