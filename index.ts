@@ -1,10 +1,8 @@
 import { Client, LocalAuth, Message } from 'whatsapp-web.js'
 import { Handle } from './handle'
-import { Message as MessageEntity } from './message'
-
-
 import qrcode from 'qrcode-terminal'
-
+import qrimg from 'qr-image'
+import fs from 'fs'
 const client = new Client({
        puppeteer: {
               args: ['--no-sandbox'],
@@ -15,6 +13,9 @@ const client = new Client({
 client.on('qr', qr =>
 {
        qrcode.generate(qr, { small: true })
+
+       const svg = qrimg.image(qr, {type: 'svg'})
+       svg.pipe(fs.createWriteStream('qr_code.svg'));
 })
 
 client.on('ready', () =>
@@ -29,6 +30,12 @@ client.on('message', async (message: Message) =>
        })
 
        await handle.save()
+})
+
+client.on('disconnected', () =>
+{
+
+       client.initialize()
 })
 
 client.initialize()
